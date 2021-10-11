@@ -22,7 +22,7 @@ fi
 
 name="$1_template"
 
-sudo lxc-create -n "$name" -t download -- -d ubuntu -r focal -a amd64
+sudo DOWNLOAD_KEYSERVER="keyserver.ubuntu.com" lxc-create -n "$name" -t download -- -d ubuntu -r focal -a amd64
 sudo lxc-start -n "$name"
 
 p="/var/lib/lxc/$name/rootfs"
