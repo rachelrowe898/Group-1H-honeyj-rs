@@ -27,10 +27,13 @@ sudo lxc-start -n "$name"
 
 p="/var/lib/lxc/$name/rootfs"
 
+# this is for making the shared folder and adding a symlink for the ubuntu user
 sudo lxc-attach -n "$name" -- mkdir shared
 python3 honey-creation.py $lines
 sudo mv employee-data.csv "$p/shared"
+sudo lxc-attach -n "$name" -- ln -s "/shared/" "/home/ubuntu"
 
+# this is for updating the ssh banner
 sudo lxc-attach -n "$name" -- apt-get install openssh-server -y
 
 for file in $(sudo ls "$p/etc/update-motd.d/"); do 
@@ -41,3 +44,5 @@ motd="01-company"
 
 sudo cp "$motd" "$p/etc/update-motd.d/"
 sudo chmod u+x "$p/etc/update-motd.d/$motd"
+
+sudo lxc-stop -n "$name"
