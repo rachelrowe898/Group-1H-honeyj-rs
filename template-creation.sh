@@ -32,7 +32,7 @@ python3 honey-creation.py $lines
 sudo mv employee-data.csv "$p/shared"
 
 sudo lxc-attach -n "$name" -- apt-get install openssh-server -y
-# sleep 5
+
 for file in $(sudo ls "$p/etc/update-motd.d/"); do 
   sudo chmod a-x "$p/etc/update-motd.d/$file"
 done 
