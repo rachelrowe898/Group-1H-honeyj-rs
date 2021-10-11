@@ -16,7 +16,7 @@ elif [ "$1" == 'C' ]; then
 elif [ "$1" == 'D' ]; then
   lines=500000
 else
-  echo "invalid template identiifier (must be A, B, C, or D)"
+  echo "invalid template identifier (must be A, B, C, or D)"
   exit 2
 fi
 
