@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Welcome to <Company>'s HR Server!"
+echo 
+echo "All shared files are in the /shared folder, which should be linked in your home directory. If you do not see this link, you can use the command 'cd /shared' to access this folder."
+echo 
+echo "Please contact your supervisor if there are any issues with your account."
+echo

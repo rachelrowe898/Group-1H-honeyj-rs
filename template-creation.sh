@@ -25,11 +25,19 @@ name="$1_template"
 sudo lxc-create -n "$name" -t download -- -d ubuntu -r focal -a amd64
 sudo lxc-start -n "$name"
 
-path="/var/lib/lxc/$name/rootfs"
+p="/var/lib/lxc/$name/rootfs"
 
 sudo lxc-attach -n "$name" -- mkdir shared
 python3 honey-creation.py $lines
-sudo mv employee-data.csv "$path/shared"
+sudo mv employee-data.csv "$p/shared"
 
 sudo lxc-attach -n "$name" -- apt-get install openssh-server -y
+# sleep 5
+for file in $(sudo ls "$p/etc/update-motd.d/"); do 
+  sudo chmod a-x "$p/etc/update-motd.d/$file"
+done 
 
+motd="01-company"
+
+sudo cp "$motd" "$p/etc/update-motd.d/"
+sudo chmod u+x "$p/etc/update-motd.d/$motd"
