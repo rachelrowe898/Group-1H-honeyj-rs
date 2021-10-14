@@ -15,3 +15,13 @@ To run the template creation script, execute the following command, with either 
 bash template-creation.sh [ABCD]
 ```
 The four letters correspond to which number of lines there are in the honey file: A to 0, B to 5000, C to 50000, and D to 500000. An lxc container of the name letter_template will be created. Ideally, this script should only be run once per template, as we are not replacing the templates unless necessary. 
+
+## Symlink Creation
+
+To run this, script, execute the following command:
+```bash
+bash monitor-new-users.sh <container name>
+```
+Or run `sudo chmod a+x monitor-new-users.sh`, and then use `./` on the file name. 
+
+This script should be run in the background, as it will continuously run. Note that you must have `inotifywait` installed on the system for this to work. Run `sudo apt-get install inotify-tools` to get this command. 
