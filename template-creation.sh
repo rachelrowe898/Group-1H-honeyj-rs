@@ -34,6 +34,7 @@ sudo mv employee-data.csv "$p/shared"
 sudo lxc-attach -n "$name" -- ln -s "/shared/" "/home/ubuntu"
 
 # this is for updating the ssh banner
+sudo lxc-attach -n "$name" -- apt-get update
 sudo lxc-attach -n "$name" -- apt-get install openssh-server -y
 
 for file in $(sudo ls "$p/etc/update-motd.d/"); do 
