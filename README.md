@@ -2,7 +2,7 @@
 
 ## Honey Creation
 
-To run the honey creation script, execute the following command, replacing 10 with the number of lines of data you want. 
+To run the honey creation script, execute the following command. 
 ```bash
 python3 honey-creation.py <number of lines>
 ```
