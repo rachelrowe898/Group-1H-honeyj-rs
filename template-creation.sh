@@ -27,11 +27,18 @@ sudo lxc-start -n "$name"
 
 p="/var/lib/lxc/$name/rootfs"
 
-# this is for making the shared folder and adding a symlink for the ubuntu user
+# this is for making the shared folder
 sudo lxc-attach -n "$name" -- mkdir shared
 python3 honey-creation.py $lines
 sudo mv employee-data.csv "$p/shared"
+
+# adding fake users + symlinks
 sudo lxc-attach -n "$name" -- ln -s "/shared/" "/home/ubuntu"
+for user in admin hbrown orange rli194 peterjp aj14 mrobinson kels dranna william bkrds umichaels rye panr ohara ellapatterson cnjr mrsamson kailee florence; do
+  pass=$(echo $RANDOM | base64 | head -c 20; echo)
+  echo -e "$pass\n$pass" | sudo lxc-attach -n "$name" -- adduser "$user" 
+  sudo lxc-attach -n "$name" -- ln -s "/shared/" "/home/$user"
+done 
 
 # this is for updating the ssh banner
 sudo lxc-attach -n "$name" -- apt-get update
