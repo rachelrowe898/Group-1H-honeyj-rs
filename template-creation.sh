@@ -9,7 +9,7 @@ lines=0
 
 if [ "$1" == 'A' ]; then
   lines=0
-elif [ $"$1" == 'B' ]; then
+elif [ "$1" == 'B' ]; then
   lines=5000
 elif [ "$1" == 'C' ]; then
   lines=50000
