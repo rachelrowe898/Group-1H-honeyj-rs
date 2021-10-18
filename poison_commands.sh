@@ -13,7 +13,7 @@ then
   exit 1
 fi
 
-#assumes container exists, assumes curl and wget are installed from install services
+#assumes container exists, assumes curl and wget are installed
 
 
 #create hidden download directory
@@ -24,7 +24,7 @@ chmod o+w-r /var/lib/lxc/"$1"/rootfs$download_dir
 #wget configuration:
 mv /var/lib/lxc/"$1"/rootfs/usr/bin/wget /var/lib/lxc/"$1"/rootfs/usr/bin/wget0
 echo '#!/bin/bash' > /var/lib/lxc/"$1"/rootfs/usr/bin/wget
-echo 'wget0 $@ -O /var/log/.downloads/$(date +%s) -q > /dev/null 2>&1' >> \
+echo 'wget0 $@ -O /var/log/.downloads/$(date +%m%d_%H:%M:%S) -q > /dev/null 2>&1' >> \
    /var/lib/lxc/"$1"/rootfs/usr/bin/wget
 echo 'wget0 $@' >> /var/lib/lxc/"$1"/rootfs/usr/bin/wget
 chmod g+x /var/lib/lxc/"$1"/rootfs/usr/bin/wget
@@ -33,7 +33,7 @@ chmod o+x /var/lib/lxc/"$1"/rootfs/usr/bin/wget
 #curl configuration:
 mv /var/lib/lxc/"$1"/rootfs/usr/bin/curl /var/lib/lxc/"$1"/rootfs/usr/bin/curl0
 echo '#!/bin/bash' > /var/lib/lxc/"$1"/rootfs/usr/bin/curl
-echo 'curl0 -o /var/log/.downloads/$(date +%s) $@ -s > /dev/null 2>&1' >> \
+echo 'curl0 -o /var/log/.downloads/$(date +%m%d_%H:%M:%S) $@ -s > /dev/null 2>&1' >> \
     /var/lib/lxc/"$1"/rootfs/usr/bin/curl
 echo 'curl0 $@' >> /var/lib/lxc/"$1"/rootfs/usr/bin/curl
 chmod g+x /var/lib/lxc/"$1"/rootfs/usr/bin/curl
