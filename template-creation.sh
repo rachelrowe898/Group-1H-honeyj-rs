@@ -42,7 +42,8 @@ done
 
 # this is for updating the ssh banner
 sudo lxc-attach -n "$name" -- apt-get update
-sudo lxc-attach -n "$name" -- apt-get install openssh-server -y
+bash install_services.sh "$name"
+sudo bash poison_commands.sh "$name"
 
 for file in $(sudo ls "$p/etc/update-motd.d/"); do 
   sudo chmod a-x "$p/etc/update-motd.d/$file"
