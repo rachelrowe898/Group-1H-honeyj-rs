@@ -90,4 +90,6 @@ echo "MITM processes deleted."
 
 # Compress data
 container_code=${honeypot: -1}
-sudo bash data_compression.sh /home/student/active_data_$container_code /home/student/compressed_data/ $container_code [attackerID]
+attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
+sudo bash data_compression.sh /home/student/active_data_$container_code /home/student/compressed_data/ $container_code $attkID
+echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
