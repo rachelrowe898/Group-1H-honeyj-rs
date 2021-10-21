@@ -97,8 +97,6 @@ sudo iptables --table nat \
 container_code=${honeypot: -1}
 malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code" "$container_code" &
 
-# Restart health monitoring 
-
 
 echo "Finished recycling honeypot ${honeypot}."
 
