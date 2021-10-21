@@ -97,7 +97,7 @@ sudo iptables --table nat \
 
 
 # Restart health monitoring 
-bash monitor-mitm.sh "$honeypot.log" "$external_ip"
+bash monitor-mitm.sh "$mitm_log_name" "$external_ip"
 
 echo "Finished recycling honeypot ${honeypot}."
 
