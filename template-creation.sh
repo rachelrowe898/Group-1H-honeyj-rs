@@ -20,12 +20,14 @@ else
   exit 2
 fi
 
-name="$1_template"
+name="HRServe$1_template"
 
 sudo DOWNLOAD_KEYSERVER="keyserver.ubuntu.com" lxc-create -n "$name" -t download -- -d ubuntu -r focal -a amd64
 sudo lxc-start -n "$name"
 
 p="/var/lib/lxc/$name/rootfs"
+
+sudo lxc-attach -n "$name" -- timedatectl set-timezone EST5EDT
 
 # this is for making the shared folder
 sudo lxc-attach -n "$name" -- mkdir shared
