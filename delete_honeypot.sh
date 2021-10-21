@@ -59,6 +59,11 @@ sudo iptables --table nat \
               --to-source "${external_ip}"
 sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 
+# Stop data collection background processes
+dataJobNum=$(jobs | grep "malware_monitoring.sh" | cut -d"]" -f1 | cut -d"[" -f2)
+kill %$dataJobNum
+echo "Malware monitoring stopped"
+
 # Delete container
 echo "Deleting container..."
 if [[ $honeypot_state != "STOPPED" ]]; then
@@ -82,3 +87,4 @@ pid2=`ps aux | grep "${process_to_delete2}" | head -n 1 | awk '{print $2}'`
 sudo kill -9 $pid2
 
 echo "MITM processes deleted."
+
