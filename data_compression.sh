@@ -17,6 +17,10 @@ fi
 
 if [ -d "$1" ]
 then
-  destdir="$2$3_$4$(date +_%m_%d)" #Zipped directory naming: [containerID]_[attackerID]_MM_DD.zip
+  destdir="$3_$4$(date +_%m_%d)" #Zipped directory naming: [containerID]_[attackerID]_MM_DD.zip
+  cd "$2"
   zip -r "$destdir" "$1"
+
+  rm -r $1
+  mkdir $1
 fi
