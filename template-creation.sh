@@ -27,8 +27,6 @@ sudo lxc-start -n "$name"
 
 p="/var/lib/lxc/$name/rootfs"
 
-sudo lxc-attach -n "$name" -- timedatectl set-timezone EST5EDT
-
 # this is for making the shared folder
 sudo lxc-attach -n "$name" -- mkdir shared
 python3 honey-creation.py $lines
@@ -55,5 +53,7 @@ motd="01-company"
 
 sudo cp "$motd" "$p/etc/update-motd.d/"
 sudo chmod u+x "$p/etc/update-motd.d/$motd"
+
+sudo lxc-attach -n "$name" -- timedatectl set-timezone EST5EDT
 
 sudo lxc-stop -n "$name"
