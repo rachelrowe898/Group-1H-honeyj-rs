@@ -20,7 +20,7 @@ else
   exit 2
 fi
 
-name="$1_template"
+name="HRServe$1_template"
 
 sudo DOWNLOAD_KEYSERVER="keyserver.ubuntu.com" lxc-create -n "$name" -t download -- -d ubuntu -r focal -a amd64
 sudo lxc-start -n "$name"
@@ -53,5 +53,7 @@ motd="01-company"
 
 sudo cp "$motd" "$p/etc/update-motd.d/"
 sudo chmod u+x "$p/etc/update-motd.d/$motd"
+
+sudo lxc-attach -n "$name" -- timedatectl set-timezone EST5EDT
 
 sudo lxc-stop -n "$name"

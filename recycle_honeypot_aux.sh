@@ -8,7 +8,7 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-honeypot=$1
+honeypot=$(echo $1 | sed 's/HRServe//')
 
 if [ "$honeypot" == "A" ]; then
   sudo bash recycle_honeypot.sh A 128.8.238.119 26 10000
