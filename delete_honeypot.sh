@@ -88,3 +88,6 @@ sudo kill -9 $pid2
 
 echo "MITM processes deleted."
 
+# Compress data
+container_code=${honeypot: -1}
+sudo bash data_compression.sh /home/student/active_data_$container_code /home/student/compressed_data/ $container_code [attackerID]
