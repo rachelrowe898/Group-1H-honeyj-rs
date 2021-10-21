@@ -14,7 +14,7 @@
 # note: Copying off malware from container to sandbox VM will be separate script
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 4 ]; then
+if [ $# -ne 5 ]; then
   echo "usage: $0 <container_to_recycle> <external_IP>\
  <netmask_prefix> <mitm_port> <mitm_log_path>"
   exit 1
