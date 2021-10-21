@@ -94,7 +94,8 @@ sudo iptables --table nat \
 
 
 # Restart data collection 
-
+container_code=${honeypot: -1}
+malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code" "$container_code" &
 
 # Restart health monitoring 
 
