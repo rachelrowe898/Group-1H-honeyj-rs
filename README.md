@@ -25,3 +25,8 @@ bash monitor-new-users.sh <container name>
 Or run `sudo chmod a+x monitor-new-users.sh`, and then use `./` on the file name. 
 
 This script should be run in the background, as it will continuously run. Note that you must have `inotifywait` installed on the system for this to work. Run `sudo apt-get install inotify-tools` to get this command. 
+
+## MITM Config File
+Clone the following repository onto your machine: https://github.com/UMD-ACES/MITM
+Follow instructions in that repository to properly set up MITM
+Then move the mitm.js configuration file into the MITM/config directory.
