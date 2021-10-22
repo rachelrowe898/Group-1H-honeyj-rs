@@ -17,10 +17,12 @@ fi
 
 if [ -d "$1" ]
 then
-  destdir="$3_$4$(date +_%m_%d)" #Zipped directory naming: [containerID]_[attackerID]_MM_DD.zip
-  cd "$2"
-  zip -r "$destdir" "active_data_$3"
+  zipname="$3_$4$(date +_%m_%d)" #Zipped directory naming: [containerID]_[attackerID]_MM_DD.zip
+  cd "/home/student"
+  localPath="active_data_$3"
+  zip -r "$zipname" "$localPath"
+  mv "$zipname.zip" "$2"
 
-  rm -r $1
-  mkdir $1
+  rm -r "$1"
+  mkdir "$1"
 fi
