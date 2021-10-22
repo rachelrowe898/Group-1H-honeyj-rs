@@ -64,7 +64,7 @@ sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 # Stop data collection background processes
 container_code=${honeypot: -1}
 dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }')
-sudo kill %${dataJobNum}
+sudo kill -9 %${dataJobNum}
 echo "Malware monitoring stopped"
 
 
