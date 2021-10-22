@@ -24,13 +24,13 @@ while read line; do
     sudo iptables --append INPUT --source "$attacker_ip" --destination "$honeypot_public_ip" --protocol tcp --jump ACCEPT
     sudo iptables --append INPUT --destination "$honeypot_public_ip" --jump DROP
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
-    sudo kill "$(ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | head -n 1)"
+    sudo kill "$(ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | xargs kill)"
     break
   elif [[ "$start" != "0" ]]; then
     curr_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     # Force honeypot reset if attacker does not leave after 3 hours
     if [ $(( $(date -d "$curr_time" +%s) - $(date -d "$start_time" +%s) )) -ge 10800 ]; then
-      sudo kill "$(ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | head -n 1)"
+      sudo kill "$(ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | xargs kill)"
       break
     fi
   fi
