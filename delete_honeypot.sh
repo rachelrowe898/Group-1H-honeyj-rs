@@ -21,9 +21,6 @@ honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 
 echo "Deleting compromised honeypot ${honeypot}..."
 
-echo "Honeypot: ${honeypot}"
-echo "External IP: ${external_ip}"
-
 ###### Delete compromised honeypot
 
 # Make sure honeypot is running so its IP can be accessed
@@ -65,7 +62,7 @@ sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 container_code=${honeypot: -1}
 dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 
-while [ $dataJobNum != "" ] ; do
+while [ -n "$dataJobNum" ] ; do
   sudo kill -9 %${dataJobNum}
   dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 done
