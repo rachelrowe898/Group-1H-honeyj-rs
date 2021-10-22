@@ -5,7 +5,7 @@
 # NOTE: kill tail -f processes before killing container
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 6 ]; then
+if [ $# -ne 5 ]; then
   echo "usage: $0 <honeypot> <external_IP>\ 
  <netmask_prefix> <mitm_port> <mitm_path>"
   exit 1
