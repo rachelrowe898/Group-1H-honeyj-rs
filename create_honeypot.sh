@@ -3,9 +3,9 @@
 # Script is used to create a new clean honeypot from a template container
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 6 ]; then
+if [ $# -ne 7 ]; then
   echo "usage: $0 <honeypot_name> <template_name> <external_IP>\ 
- <netmask_prefix> <mitm_port> <mitm_path>"
+ <netmask_prefix> <mitm_port> <mitm_path> <mitm_log_path>"
   exit 1
 fi
 
@@ -15,8 +15,8 @@ external_ip=$3
 netmask_prefix=$4
 mitm_port=$5
 mitm_path=$6
+mitm_log_path=$7
 
-honeypot_state=$(sudo lxc-info -q -n "${honeypot}" -sH)
 template_state=`sudo lxc-ls -f | grep "${template}" | awk '{print $2}' | xargs`
 
 echo "Creating clean honeypot ${honeypot}..."
@@ -71,10 +71,10 @@ echo "Setting up MITM..."
 # sudo nohup node [full path to ./mitm/index.js] [id] [port] [container_ip] \
 # [container_id] [auto-access true/false] [mitm config name] > mitm_file 2>&1 &
 
-mitm_log_name="${honeypot}.log"
+mitm_log="${mitm_log_path}/${honeypot}.log"
 
 sudo nohup node "$mitm_path" HACS200 "$mitm_port" \
-  "$clean_ip" "$honeypot" true "mitm.js" > "$mitm_log_name" 2>&1 &
+  "$clean_ip" "$honeypot" true "mitm.js" > "$mitm_log" 2>&1 &
 
 
 # Note: Container given as argument is assumed to already have openssh-server 
@@ -93,12 +93,13 @@ sudo iptables --table nat \
               --to-destination "${host_ip}:${mitm_port}"
 
 
+
+# Restart data collection and monitoring
+sudo bash monitor-mitm.sh "$mitm_log" "$external_ip"
+
 # Restart data collection 
 container_code=${honeypot: -1}
 sudo bash malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code" "$container_code" &
-
-# Restart monitoring 
-bash monitor-mitm.sh "$mitm_log_name" "$external_ip"
 
 echo "Finished recycling honeypot ${honeypot}."
 
