@@ -7,7 +7,7 @@ fi
 
 mitm_log_file=$1
 honeypot_public_ip=$2
-container=$(echo "$mitm_log_file" | sed 's/.log//')
+container=$(echo "$mitm_log_file" | cut -d '/' -f 5 | sed 's/.log//')
 start_time="0"
 
 while read line; do
