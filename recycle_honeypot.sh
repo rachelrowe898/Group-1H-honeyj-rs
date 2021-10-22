@@ -35,7 +35,7 @@ if [[ -z $(sudo lxc-ls --filter="^${honeypot}$") ]]; then
 else
   echo "Recycling existing honeypot ${honeypot}..."
 # Else, recycle honeypot
-  sudo bash delete_honeypot.sh "$honeypot" "$template" \
+  sudo bash delete_honeypot.sh "$honeypot" \
     "$external_ip" "$netmask_prefix" "$mitm_port" "$mitm_path"
   sudo bash create_honeypot.sh "$honeypot" "$template" \
     "$external_ip" "$netmask_prefix" "$mitm_port" "$mitm_path" "$mitm_log_path"

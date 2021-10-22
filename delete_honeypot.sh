@@ -5,18 +5,17 @@
 # NOTE: kill tail -f processes before killing container
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 6 ]; then
-  echo "usage: $0 <honeypot> <template> <external_IP>\ 
+if [ $# -ne 5 ]; then
+  echo "usage: $0 <honeypot> <external_IP>\ 
  <netmask_prefix> <mitm_port> <mitm_path>"
   exit 1
 fi
 
 honeypot=$1
-template=$2
-external_ip=$3
-netmask_prefix=$4
-mitm_port=$5
-mitm_path=$6
+external_ip=$2
+netmask_prefix=$3
+mitm_port=$4
+mitm_path=$5
 
 honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 
@@ -61,15 +60,15 @@ sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 
 # Stop data collection background processes
 dataJobNum=$(jobs | grep "malware_monitoring.sh" | grep "$honeypot" | cut -d"]" -f1 | cut -d"[" -f2)
-kill %$dataJobNum
+kill %${dataJobNum}
 echo "Malware monitoring stopped"
 
 # Delete container
 echo "Deleting container..."
 if [[ $honeypot_state != "STOPPED" ]]; then
-  sudo lxc-stop -n $honeypot
+  sudo lxc-stop -n "$honeypot"
 fi
-sudo lxc-destroy -n $honeypot
+sudo lxc-destroy -n "$honeypot"
 sleep 5
 echo "Compromised honeypot ${honeypot} deleted."
 
@@ -79,17 +78,18 @@ echo "Deleting MITM processes..."
 process_to_delete1="sudo nohup node ${mitm_path} HACS200 ${mitm_port} \
 ${compromised_ip} ${honeypot} true mitm.js"
 pid1=`ps aux | grep "${process_to_delete1}" | head -n 1 | awk '{print $2}'`
-sudo kill -9 $pid1
+sudo kill -9 "$pid1"
 
 process_to_delete2="node ${mitm_path} HACS200 ${mitm_port} \
 ${compromised_ip} ${honeypot} true mitm.js"
 pid2=`ps aux | grep "${process_to_delete2}" | head -n 1 | awk '{print $2}'`
-sudo kill -9 $pid2
+sudo kill -9 "$pid2"
 
 echo "MITM processes deleted."
 
-# Compress data
+###### Compress and save collected data
 container_code=${honeypot: -1}
 attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
-sudo bash data_compression.sh /home/student/active_data_$container_code /home/student/compressed_data/$container_code $container_code $attkID
+sudo bash data_compression.sh "/home/student/active_data_${container_code}" "/home/student/compressed_data/${container_code}" "$container_code" "$attkID"
+
 echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
