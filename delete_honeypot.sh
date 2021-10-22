@@ -6,7 +6,7 @@
 
 # First check if proper number of shell arguments is given
 if [ $# -ne 5 ]; then
-  echo "usage: $0 <honeypot> <external_IP>\ 
+  echo "usage: $0 <honeypot> <external_IP>\
  <netmask_prefix> <mitm_port> <mitm_path>"
   exit 1
 fi
@@ -20,6 +20,9 @@ mitm_path=$5
 honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 
 echo "Deleting compromised honeypot ${honeypot}..."
+
+echo "Honeypot: ${honeypot}"
+echo "External IP: ${external_ip}"
 
 ###### Delete compromised honeypot
 
@@ -59,14 +62,16 @@ sudo iptables --table nat \
 sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 
 # Stop data collection background processes
-dataJobNum=$(jobs | grep "malware_monitoring.sh" | grep "$honeypot" | cut -d"]" -f1 | cut -d"[" -f2)
-kill %${dataJobNum}
+container_code=${honeypot: -1}
+dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }')
+sudo kill %${dataJobNum}
 echo "Malware monitoring stopped"
+
 
 # Delete container
 echo "Deleting container..."
 if [[ $honeypot_state != "STOPPED" ]]; then
-  sudo lxc-stop -n "$honeypot"
+  sudo lxc-stop -n "$honeypot" -t 5
 fi
 sudo lxc-destroy -n "$honeypot"
 sleep 5
@@ -88,8 +93,7 @@ sudo kill -9 "$pid2"
 echo "MITM processes deleted."
 
 ###### Compress and save collected data
-container_code=${honeypot: -1}
 attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
-sudo bash data_compression.sh "/home/student/active_data_${container_code}" "/home/student/compressed_data/${container_code}" "$container_code" "$attkID"
+sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
 
 echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
