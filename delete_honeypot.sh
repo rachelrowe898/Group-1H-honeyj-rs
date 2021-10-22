@@ -63,7 +63,7 @@ container_code=${honeypot: -1}
 dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 
 while [ -n "$dataJobNum" ] ; do
-  sudo kill -9 %${dataJobNum}
+  sudo kill -9 ${dataJobNum}
   dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 done
 echo "Malware monitoring stopped"
