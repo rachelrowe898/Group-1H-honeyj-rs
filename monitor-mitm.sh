@@ -17,7 +17,7 @@ while read line; do
   elif [[ "$line" == *"Adding the following credentials"* ]]; then 
     # Add symbolic link to new user account created by MITM
     user=$(echo $line | awk '{ print $11 }' | sed 's/\"//g' | cut -d ":" -f 1)
-    sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user"
+    sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user/"
   elif [[ "$line" == *"Attacker authenticated and is inside container"* ]]; then
     start_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
