@@ -26,7 +26,7 @@ while read line; do
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     sudo kill "$(ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | head -n 1)"
     break
-  else
+  elif [[ "$start" != "0" ]]; then
     curr_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     # Force honeypot reset if attacker does not leave after 3 hours
     if [ $(( $(date -d "$curr_time" +%s) - $(date -d "$start_time" +%s) )) -ge 10800 ]; then
