@@ -41,13 +41,13 @@ while read line; do
     sudo iptables -A INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
     sudo iptables -A INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j DROP
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
-    ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
+    ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
   elif [[ "$start_time" != "0" ]]; then
     curr_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     # Force honeypot reset if attacker does not leave after 3 hours
     if [ $(( $(date -d "$curr_time" +%s) - $(date -d "$start_time" +%s) )) -ge 10800 ]; then
-      ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
+      ps -aux | grep "sudo tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
       break
     fi
   fi
