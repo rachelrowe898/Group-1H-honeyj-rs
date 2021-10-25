@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ $# -ne 4 ]; then 
+if [ $# -ne 4 ]; then
   echo "usage: $0 <mitm log file path> <attacker_ip> <host_ip> <mitm port>"
   exit 1
-fi 
+fi
 
 echo "TIMER RUNNING"
 container=$(echo "$1" | cut -d '/' -f 5 | sed 's/.log//')
