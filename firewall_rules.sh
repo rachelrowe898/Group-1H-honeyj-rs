@@ -37,7 +37,7 @@ MODE=1
 # Update this if your container IP address and network is different
 #
 CONTAINER_NETWORK="10.0.3.1/24"
-CONTAINER_GATEWAY="10.0.3.1"
+CONTAINER_GATEWAY="$(hostname -I | awk '{print $1}')"
 CONTAINER_INTERFACE="lxcbr0"
 
 ##
