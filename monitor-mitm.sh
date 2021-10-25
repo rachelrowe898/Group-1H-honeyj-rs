@@ -7,7 +7,6 @@ fi
 
 mitm_log_file=$1
 container=$(echo "$mitm_log_file" | cut -d '/' -f 5 | sed 's/.log//')
-start_time="0"
 rules_added=0
 
 host_ip=$(hostname -I | awk '{print $1}')
@@ -38,7 +37,6 @@ while read line; do
     sleep 1
     sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user/"
   elif [[ "$line" == *"Attacker authenticated and is inside container"* && $rules_added -eq 0 ]]; then
-    start_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     bash timer.sh "$mitm_log_file" "$attacker_ip" "$host_ip" "$mitm_port" &
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
     rules_added=1
@@ -47,13 +45,6 @@ while read line; do
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
-  elif [[ "$start_time" != "0" ]]; then
-    curr_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
-    # Force honeypot reset if attacker does not leave after 3 hours
-    if [ $(( $(date -d "$curr_time" +%s) - $(date -d "$start_time" +%s) )) -ge 10800 ]; then
-      ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
-      break
-    fi
   fi
 done < <(sudo tail -f "$1")
 
