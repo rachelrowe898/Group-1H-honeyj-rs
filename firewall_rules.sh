@@ -5,6 +5,8 @@
 
 #pve-firewall restart
 
+modprobe br_netfilter
+
 ##
 # Reset the firewall
 /sbin/iptables -F
@@ -203,6 +205,9 @@ fi
 
 # Allow all other HP outgoing traffic
 /sbin/iptables -A FORWARD -s $CONTAINER_NETWORK -j ACCEPT -m comment --comment "Allow all other honeypot outgoing"
+
+# Restart service to make sure container IP addresses appear
+systemctl restart lxc-net
 
 exit 0
 
