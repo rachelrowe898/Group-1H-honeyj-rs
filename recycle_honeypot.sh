@@ -27,7 +27,7 @@ mitm_path="/home/student/Group-1H-honeyj-rs/MITM/mitm/index.js"
 # ensure UMD network interface is up
 sudo ip link set dev enp4s2 up
 
-echo -n "\n[$(date +"%F %H:%M:%S")] "
+echo -n "[$(date +"%F %H:%M:%S")] "
 if [[ -z $(sudo lxc-ls --filter="^${honeypot}$") ]]; then
 # If honeypot does not exist, create clean honeypot
   echo "Creating honeypot ${honeypot}..."
