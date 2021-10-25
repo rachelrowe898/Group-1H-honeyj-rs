@@ -5,7 +5,6 @@ if [ $# -ne 4 ]; then
   exit 1
 fi
 
-echo "TIMER RUNNING"
 container=$(echo "$1" | cut -d '/' -f 5 | sed 's/.log//')
 attacker_ip="$2"
 host_ip="$3"
@@ -15,8 +14,6 @@ sleep 10800
 
 # murder monitoring script
 ps -aux | grep "monitor-mitm.sh $1" |  awk '{ print $2 }' | sed '$ d' | xargs kill
-
-echo "REMOVING (sleep)"
 
 # end stuff
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
