@@ -51,8 +51,6 @@ done < <(sudo tail -f "$1")
 # kill timer command
 ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
 
-echo "REMOVING (log)"
-
 # After attacker leaves, reset networking rules and recycle container
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
 sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
