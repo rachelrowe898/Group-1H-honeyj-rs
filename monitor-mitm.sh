@@ -23,7 +23,7 @@ elif [ "$container" == "HRServeD" ]; then
   mitm_port=10003
 else
   echo "Error parsing log file name"
-  # exit 1
+  exit 1
 fi
 
 
