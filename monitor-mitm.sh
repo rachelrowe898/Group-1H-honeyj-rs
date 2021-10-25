@@ -13,6 +13,7 @@ rules_added=0
 host_ip=$(hostname -I | awk '{print $1}')
 mitm_port=0
 
+# Get port associated with target honeypot
 if [ "$container" == "HRServeA" ]; then
   mitm_port=10000
 elif [ "$container" == "HRServeB" ]; then
@@ -42,7 +43,7 @@ while read line; do
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
     rules_added=1
     sudo iptables -A INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
-    sudo iptables -A INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j DROP
+    sudo iptables -A INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
@@ -63,5 +64,5 @@ echo "REMOVING (log)"
 
 # After attacker leaves, reset networking rules and recycle container
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
-sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j DROP
+sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
 sudo bash recycle_honeypot_aux.sh "$container"
