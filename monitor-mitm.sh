@@ -36,7 +36,7 @@ while read line; do
     user=$(echo "$line" | awk '{ print $11 }' | sed 's/\"//g' | cut -d ":" -f 1)
     sleep 1
     sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user/"
-  elif [[ "$line" == *"Attacker authenticated and is inside container"* && "$rules_added" -eq 0 ]]; then
+  elif [[ "$line" == *"Attacker authenticated and is inside container"* && $rules_added -eq 0 ]]; then
     start_time=$(echo "$line" | cut -d ' ' -f 1-2 | sed 's/ /T/')
     bash timer.sh "$mitm_log_file" "$attacker_ip" "$host_ip" "$mitm_port" &
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
@@ -64,4 +64,4 @@ echo "REMOVING (log)"
 # After attacker leaves, reset networking rules and recycle container
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
 sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j DROP
-echo sudo bash recycle_honeypot_aux.sh "$container"
+sudo bash recycle_honeypot_aux.sh "$container"

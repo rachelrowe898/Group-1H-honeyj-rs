@@ -21,4 +21,4 @@ echo "REMOVING (sleep)"
 # end stuff
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
 sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j DROP
-echo sudo bash recycle_honeypot_aux.sh "$container"
+sudo bash recycle_honeypot_aux.sh "$container"
