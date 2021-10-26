@@ -17,3 +17,6 @@ sudo lxc-attach -n $1 -- apt-get install wget -y
 sudo lxc-attach -n $1 -- apt-get install curl -y
 
 sudo lxc-attach -n $1 -- apt-get install openssh-server -y
+
+sudo lxc-attach -n $1 -- apt-get install man -y 
+sudo lxc-attach -n $1 -- apt-get install zip -y 
