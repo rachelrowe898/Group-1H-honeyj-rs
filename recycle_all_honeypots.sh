@@ -1,3 +1,4 @@
+#!/bin/bash
 # Run script on restart using crontab
 
 sudo bash recycle_honeypot.sh HRServeA 128.8.238.119 26 10000 /home/student/active_data_A >> /home/student/honeypot_logs/A_lifecycle.log
