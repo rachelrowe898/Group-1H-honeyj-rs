@@ -71,6 +71,7 @@ echo "Malware monitoring stopped"
 
 # Delete container
 echo "Deleting container..."
+honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 if [[ $honeypot_state != "STOPPED" ]]; then
   sudo lxc-stop -n "$honeypot" -t 5
 fi
