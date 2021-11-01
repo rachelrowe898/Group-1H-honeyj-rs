@@ -101,4 +101,5 @@ if [ $compress_data_flag -eq 1 ]; then
   attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
   sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
   echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
+  echo "Attacker data compressed and saved."
 fi
