@@ -1,0 +1,24 @@
+#!/bin/bash
+
+apikey="3914450a1c139c271972b77ec8c6b37b920aac9e74520e17085474b01265b68c"
+
+echo "$(tput setaf 7)Uploading $1 to VirusTotal$(tput sgr0)"
+
+vt_hash=$(curl -\# -X POST 'https://www.virustotal.com/vtapi/v2/file/scan' \
+    --form apikey="$apikey" \
+    --form file=@"$1" | jq .sha256 | cut -d\" -f2)
+
+echo "$(tput setaf 4)SHA256:${vt_hash}  - waiting for report..$(tput sgr0)"
+
+while true; do
+  sleep 1
+  response=$(curl -sX POST 'https://www.virustotal.com/vtapi/v2/file/report' \
+        --form apikey="$apikey" \
+        --form resource="$vt_hash")
+
+  if (echo -n "$response" | grep -q 'Scan finished'); then
+    echo "$response" | jq "{\"$1\": {total,positives}}"
+    break;
+  fi
+  echo -e -n "$(tput setaf 7).$(tput sgr0)\r"
+done
