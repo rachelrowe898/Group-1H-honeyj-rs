@@ -55,7 +55,7 @@ while read line; do
   fi
 done < <(sudo tail -f "$1")
 
-if [ "$valid_data" -eq 1]; then 
+if [ "$valid_data" -eq 1 ]; then 
   # kill timer command
   ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
 
