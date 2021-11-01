@@ -45,6 +45,12 @@ while read line; do
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
+  elif [[ "$line" == *"Invalid credentials"* ]]; then 
+    # force recycling but w/o saving data -- this means we have a problem 
+    sudo bash recycle_honeypot_aux.sh "$container" 0
+    ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
+    # we don't need to remove the timer or iptables rules since they shouldn't have been started/created yet
+    exit 2
   fi
 done < <(sudo tail -f "$1")
 
