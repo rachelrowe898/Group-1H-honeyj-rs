@@ -96,7 +96,7 @@ sudo kill -9 "$pid2"
 echo "MITM processes deleted."
 
 ###### Compress and save collected data only if attacker successfully logged into honeypot
-if [ $compress_data_flag -eq 1 ]; then
+if [ "$compress_data_flag" == "1" ]; then
   echo "Compressing data..."
   attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
   sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
