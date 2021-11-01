@@ -12,6 +12,7 @@ rules_added=0
 host_ip=$(hostname -I | awk '{print $1}')
 mitm_port=0
 valid_data=1
+entered=0
 
 # Get port associated with target honeypot
 if [ "$container" == "HRServeA" ]; then
@@ -41,19 +42,20 @@ while read line; do
     bash timer.sh "$mitm_log_file" "$attacker_ip" "$host_ip" "$mitm_port" &
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
     rules_added=1
+    entered=1
     sudo iptables -A INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
     sudo iptables -A INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
-  elif [[ "$line" == *"Invalid credentials"* ]]; then 
+  elif [[ "$line" == *"Invalid credentials"* && entered -eq 0 ]]; then 
     # force recycling but w/o saving data -- this means we have a problem 
     valid_data=0
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
   fi
 done < <(sudo tail -f "$1")
 
-if [ "$valid_data" -eq 1]; then 
+if [ "$valid_data" -eq 1 ]; then 
   # kill timer command
   ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
 
