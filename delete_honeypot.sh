@@ -5,9 +5,9 @@
 # NOTE: kill tail -f processes before killing container
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 5 ]; then
+if [ $# -ne 6 ]; then
   echo "usage: $0 <honeypot> <external_IP>\
- <netmask_prefix> <mitm_port> <mitm_path>"
+ <netmask_prefix> <mitm_port> <mitm_path> <compress_data_flag>"
   exit 1
 fi
 
@@ -16,6 +16,7 @@ external_ip=$2
 netmask_prefix=$3
 mitm_port=$4
 mitm_path=$5
+compress_data_flag=$6
 
 honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 
@@ -94,8 +95,10 @@ sudo kill -9 "$pid2"
 
 echo "MITM processes deleted."
 
-###### Compress and save collected data
-attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
-sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
-
-echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
+###### Compress and save collected data only if attacker successfully logged into honeypot
+if [ $compress_data_flag -eq 1 ]; then
+  echo "Compressing data..."
+  attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
+  sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
+  echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
+fi
