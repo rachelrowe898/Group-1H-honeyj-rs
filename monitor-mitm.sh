@@ -11,6 +11,7 @@ rules_added=0
 
 host_ip=$(hostname -I | awk '{print $1}')
 mitm_port=0
+valid_data=1
 
 # Get port associated with target honeypot
 if [ "$container" == "HRServeA" ]; then
@@ -47,17 +48,18 @@ while read line; do
     break
   elif [[ "$line" == *"Invalid credentials"* ]]; then 
     # force recycling but w/o saving data -- this means we have a problem 
-    sudo bash recycle_honeypot_aux.sh "$container" 0
+    valid_data=0
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
-    # we don't need to remove the timer or iptables rules since they shouldn't have been started/created yet
-    exit 2
   fi
 done < <(sudo tail -f "$1")
 
-# kill timer command
-ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
+if [ "$valid_data" -eq 1]; then 
+  # kill timer command
+  ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
 
-# After attacker leaves, reset networking rules and recycle container
-sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
-sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
-sudo bash recycle_honeypot_aux.sh "$container" 1
+  # After attacker leaves, reset networking rules and recycle container
+  sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
+  sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
+fi 
+
+sudo bash recycle_honeypot_aux.sh "$container" "$valid_data"
