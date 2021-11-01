@@ -1,7 +1,20 @@
 #!/bin/bash
 # Run script on restart using crontab
 
-sudo bash recycle_honeypot.sh HRServeA 128.8.238.119 26 10000 /home/student/active_data_A >> /home/student/honeypot_logs/A_lifecycle.log
-sudo bash recycle_honeypot.sh HRServeB 128.8.238.86 26 10001 /home/student/active_data_B >> /home/student/honeypot_logs/B_lifecycle.log
-sudo bash recycle_honeypot.sh HRServeC 128.8.238.120 26 10002 /home/student/active_data_C >> /home/student/honeypot_logs/C_lifecycle.log
-sudo bash recycle_honeypot.sh HRServeD 128.8.37.125 27 10003 /home/student/active_data_D >> /home/student/honeypot_logs/D_lifecycle.log
+if [ $# -gt 1 ]; then
+  echo "usage: $0 <optional: compress_data_flag>"
+  exit 1
+fi
+
+# default is to compress data after recycling
+compress_data_flag=${1:-1}
+
+if [ "$compress_data_flag" != "1" ] && [ "$compress_data_flag" != "0" ]; then
+  echo "Invalid argument for <compress_data_flag>: $compress_data_flag"
+  exit 1
+fi
+
+sudo bash recycle_honeypot_aux.sh A "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh B "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh C "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh D "$compress_data_flag"
