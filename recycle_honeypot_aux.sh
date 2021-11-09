@@ -4,7 +4,17 @@
 
 # First check if proper number of shell arguments is given
 if [ $# -ne 2 ]; then
-  echo "usage: $0 <honeypot_name> <compress_data_flag>"
+  echo "usage: $0 <honeypot_name> <optional: compress_data_flag>"
+  exit 1
+fi
+
+# compress data only if compress_data_flag is set to 1
+# default is to compress data after recycling
+compress_data_flag=${2:-1}
+
+if [ "$compress_data_flag" != "1" ] && [ "$compress_data_flag" != "0" ]; then
+  echo "Invalid argument for <compress_data_flag>: $compress_data_flag"
+  echo "Please input either 0 or 1 for <compress_data_flag>"
   exit 1
 fi
 
@@ -19,6 +29,6 @@ elif [ "$honeypot" == "C" ]; then
 elif [ "$honeypot" == "D" ]; then 
   sudo bash recycle_honeypot.sh HRServeD 128.8.37.125 27 10003 /home/student/active_data_D "$2" >> /home/student/honeypot_logs/D_lifecycle.log 2>&1
 else
-  echo "Invalid honeypot name. Cannot recycle honeypot."
+  echo "Invalid honeypot name. Cannot recycle honeypot. Please input either A, B, C, or D."
   exit 1
 fi
