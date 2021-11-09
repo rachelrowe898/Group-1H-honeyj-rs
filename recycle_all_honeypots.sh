@@ -11,6 +11,7 @@ compress_data_flag=${1:-1}
 
 if [ "$compress_data_flag" != "1" ] && [ "$compress_data_flag" != "0" ]; then
   echo "Invalid argument for <compress_data_flag>: $compress_data_flag"
+  echo "Please input either 0 or 1 for <compress_data_flag>"
   exit 1
 fi
 
