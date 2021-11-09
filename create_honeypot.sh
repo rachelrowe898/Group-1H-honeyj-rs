@@ -95,7 +95,7 @@ sudo iptables --table nat \
 
 
 # Restart data collection and monitoring
-sudo bash monitor-mitm.sh "$mitm_log" &
+sudo bash monitor-mitm.sh "$mitm_log" "$mitm_port" &
 
 # Restart data collection 
 container_code=${honeypot: -1}
