@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
   echo "usage: $0 <mitm log file> <mitm port>"
   exit 1
 fi
