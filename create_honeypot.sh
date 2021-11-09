@@ -46,7 +46,7 @@ fi
 echo "[$(date +"%F %H:%M:%S")] Copying template..."
 sudo lxc-copy -n "$template" -N "$honeypot"
 sudo lxc-start -n "$honeypot"
-sleep 5 # allow enough time for the IP mapping to be configured
+sleep 10 # allow enough time for the IP mapping to be configured
 echo "[$(date +"%F %H:%M:%S")] Copy container $template to $honeypot"
 
 
