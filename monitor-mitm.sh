@@ -1,11 +1,12 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-  echo "usage: $0 <mitm log file>"
+if [ $# -ne 2 ]; then
+  echo "usage: $0 <mitm log file> <mitm port>"
   exit 1
 fi
 
 mitm_log_file=$1
+mitm_port=$2
 container=$(echo "$mitm_log_file" | cut -d '/' -f 5 | sed 's/.log//')
 rules_added=0
 
@@ -13,21 +14,6 @@ host_ip=$(hostname -I | awk '{print $1}')
 mitm_port=0
 valid_data=1
 entered=0
-
-# Get port associated with target honeypot
-if [ "$container" == "HRServeA" ]; then
-  mitm_port=10000
-elif [ "$container" == "HRServeB" ]; then
-  mitm_port=10001
-elif [ "$container" == "HRServeC" ]; then
-  mitm_port=10002
-elif [ "$container" == "HRServeD" ]; then
-  mitm_port=10003
-else
-  echo "Error parsing log file name"
-  exit 1
-fi
-
 
 while read line; do
   if [[ $rules_added -eq 0 && "$line" == *"Attacker connected"* ]]; then
@@ -64,4 +50,4 @@ if [ "$valid_data" -eq 1 ]; then
   sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
 fi 
 
-sudo bash recycle_honeypot_aux.sh "$container" "$valid_data"
+sudo bash recycle_honeypot_aux.sh "$container" "$mitm_port" "$valid_data"

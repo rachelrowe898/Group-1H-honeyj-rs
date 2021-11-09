@@ -2,8 +2,6 @@
 
 # Script is used to delete compromised honeypot
 
-# NOTE: kill tail -f processes before killing container
-
 # First check if proper number of shell arguments is given
 if [ $# -ne 6 ]; then
   echo "usage: $0 <honeypot> <external_IP>\
@@ -62,19 +60,18 @@ sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 # Stop data collection background processes
 # kill malware_monitoring.sh
 sleep 5
-container_code=${honeypot: -1}
-dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 
+dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "$honeypot" | awk '{ print $2 }' | sed -n 1p)
 while [ -n "$dataJobNum" ] ; do
   sudo kill -9 ${dataJobNum}
-  dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
+  dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "$honeypot" | awk '{ print $2 }' | sed -n 1p)
 done
 
-#kill inotifywait specifically
-dataJobNum=$(ps aux | grep "inotifywait" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
+# kill inotifywait processes specifically
+dataJobNum=$(ps aux | grep "inotifywait" | grep "$honeypot" | awk '{ print $2 }' | sed -n 1p)
 while [ -n "$dataJobNum" ] ; do
   sudo kill -9 ${dataJobNum}
-  dataJobNum=$(ps aux | grep "inotifywait" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
+  dataJobNum=$(ps aux | grep "inotifywait" | grep "$honeypot" | awk '{ print $2 }' | sed -n 1p)
 done
 
 echo "[$(date +"%F %H:%M:%S")] Malware monitoring stopped"
@@ -107,8 +104,9 @@ echo "[$(date +"%F %H:%M:%S")] MITM processes deleted."
 ###### Compress and save collected data only if attacker successfully logged into honeypot
 if [ "$compress_data_flag" == "1" ]; then
   echo "[$(date +"%F %H:%M:%S")] Compressing data..."
+  container_code=${honeypot: -2:-1}
   attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
-  sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
-  echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
+  sudo bash data_compression.sh "/home/student/active_data_$(($mitm_port - 10000))/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID" "$(($mitm_port - 10000))"
+  echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_${container_code}.txt"
   echo "[$(date +"%F %H:%M:%S")] Attacker data compressed and saved."
 fi

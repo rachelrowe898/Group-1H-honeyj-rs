@@ -15,7 +15,6 @@ if [ $# -ne 6 ]; then
 fi
 
 honeypot=$1
-template="$1_template"
 external_ip=$2
 netmask_prefix=$3
 mitm_port=$4
@@ -32,13 +31,13 @@ echo -n "[$(date +"%F %H:%M:%S")] "
 if [[ -z $(sudo lxc-ls --filter="^${honeypot}$") ]]; then
 # If honeypot does not exist, create clean honeypot
   echo "Creating honeypot ${honeypot}..."
-  sudo bash create_honeypot.sh "$honeypot" "$template" \
-    "$external_ip" "$netmask_prefix" "$mitm_port" "$mitm_path" "$mitm_log_path"
+  sudo bash create_honeypot.sh "$external_ip" "$netmask_prefix" \
+    "$mitm_port" "$mitm_path" "$mitm_log_path"
 else
-  echo "Recycling existing honeypot ${honeypot}..."
 # Else, recycle honeypot
+  echo "Recycling existing honeypot ${honeypot}..."
   sudo bash delete_honeypot.sh "$honeypot" \
     "$external_ip" "$netmask_prefix" "$mitm_port" "$mitm_path" "$compress_data_flag"
-  sudo bash create_honeypot.sh "$honeypot" "$template" \
-    "$external_ip" "$netmask_prefix" "$mitm_port" "$mitm_path" "$mitm_log_path"
+  sudo bash create_honeypot.sh "$external_ip" "$netmask_prefix" \
+    "$mitm_port" "$mitm_path" "$mitm_log_path"
 fi
