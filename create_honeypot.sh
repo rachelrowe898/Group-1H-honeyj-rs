@@ -1,21 +1,28 @@
 #!/bin/bash
 
 # Script is used to create a new clean honeypot from a template container
+# The template container is randomly chosen
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 7 ]; then
-  echo "usage: $0 <honeypot_name> <template_name> <external_IP>\ 
- <netmask_prefix> <mitm_port> <mitm_path> <mitm_log_path>"
+if [ $# -ne 5 ]; then
+  echo "usage: $0 <external_IP> <netmask_prefix> <mitm_port> <mitm_path> <mitm_log_path>"
   exit 1
 fi
 
-honeypot=$1
-template=$2
-external_ip=$3
-netmask_prefix=$4
-mitm_port=$5
-mitm_path=$6
-mitm_log_path=$7
+external_ip=$1
+netmask_prefix=$2
+mitm_port=$3
+mitm_path=$4
+mitm_log_path=$5
+
+###### Randomly choose new template container
+templates=('A' 'B' 'C' 'D')
+rand_int=$((0 + $RANDOM % 4))
+
+template_id=${templates[$rand_int]}
+
+honeypot="HRServe${template_id}$(($mitm_port - 10000))"
+template="HRServe${template_id}_template"
 
 template_state=`sudo lxc-ls -f | grep "${template}" | awk '{print $2}' | xargs`
 
@@ -98,9 +105,9 @@ sudo iptables --table nat \
 sudo bash monitor-mitm.sh "$mitm_log" "$mitm_port" &
 
 # Restart data collection 
-container_code=${honeypot: -1}
-sudo bash malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code/" "$container_code" &
+container_code=${honeypot: -2:-1} # get letter code for container
+sudo bash malware_monitoring.sh "$honeypot" "/home/student/active_data_$(($mitm_port - 10000))/" "$container_code" &
 
-echo "[$(date +"%F %H:%M:%S")] Finished recycling honeypot ${honeypot}."
+echo "[$(date +"%F %H:%M:%S")] Finished recycling honeypot linked to ${external_ip}"
 echo "============================================================"
 
