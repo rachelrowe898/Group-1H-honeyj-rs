@@ -30,7 +30,7 @@ fi
 
 
 while read line; do
-  if [[ "$line" == *"Attacker connected"* ]]; then
+  if [[ $rules_added -eq 0 && "$line" == *"Attacker connected"* ]]; then
     # stores last seen IP address in the MITM log
     attacker_ip=$(echo "$line" | awk '{ print $8 }')
   elif [[ "$line" == *"Adding the following credentials"* ]]; then
@@ -38,7 +38,7 @@ while read line; do
     user=$(echo "$line" | awk '{ print $11 }' | sed 's/\"//g' | cut -d ":" -f 1)
     sleep 1
     sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user/"
-  elif [[ "$line" == *"Attacker authenticated and is inside container"* && $rules_added -eq 0 ]]; then
+  elif [[ $rules_added -eq 0 && "$line" == *"Attacker authenticated and is inside container"* ]]; then
     bash timer.sh "$mitm_log_file" "$attacker_ip" "$host_ip" "$mitm_port" &
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
     rules_added=1
@@ -48,7 +48,7 @@ while read line; do
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
-  elif [[ "$line" == *"Invalid credentials"* && entered -eq 0 ]]; then 
+  elif [[ $entered -eq 0 && "$line" == *"Invalid credentials"* ]]; then 
     # force recycling but w/o saving data -- this means we have a problem 
     valid_data=0
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
