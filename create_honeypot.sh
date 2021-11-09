@@ -102,4 +102,5 @@ container_code=${honeypot: -1}
 sudo bash malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code/" "$container_code" &
 
 echo "[$(date +"%F %H:%M:%S")] Finished recycling honeypot ${honeypot}."
+echo "============================================================"
 
