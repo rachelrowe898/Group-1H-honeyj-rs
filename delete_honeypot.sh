@@ -20,18 +20,18 @@ compress_data_flag=$6
 
 honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 
-echo "Deleting compromised honeypot ${honeypot}..."
+echo "[$(date +"%F %H:%M:%S")] Deleting compromised honeypot ${honeypot}..."
 
 ###### Delete compromised honeypot
 
 # Make sure honeypot is running so its IP can be accessed
-echo "Checking honeypot state..."
+echo "[$(date +"%F %H:%M:%S")] Checking honeypot state..."
 if [[ $honeypot_state != "RUNNING" ]]; then
   sudo lxc-start -n "$honeypot"
   sleep 5
 fi
 
-echo "Deleting relevant iptables rules..."
+echo "[$(date +"%F %H:%M:%S")] Deleting relevant iptables rules..."
 host_ip=$(hostname -I | awk '{print $1}')
 sudo iptables --table nat \
               --delete PREROUTING \
@@ -43,7 +43,7 @@ sudo iptables --table nat \
               --to-destination "${host_ip}:${mitm_port}"
 
 # Delete NAT mapping and external IP
-echo "Deleting NAT mapping to compromised honeypot..."
+echo "[$(date +"%F %H:%M:%S")] Deleting NAT mapping to compromised honeypot..."
 compromised_ip="$(sudo lxc-info -n "${honeypot}" -iH)"
 sudo iptables --table nat \
               --delete PREROUTING \
@@ -77,21 +77,21 @@ while [ -n "$dataJobNum" ] ; do
   dataJobNum=$(ps aux | grep "inotifywait" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 done
 
-echo "Malware monitoring stopped"
+echo "[$(date +"%F %H:%M:%S")] Malware monitoring stopped"
 
 # Delete container
-echo "Deleting container..."
+echo "[$(date +"%F %H:%M:%S")] Deleting container..."
 honeypot_state=$(sudo lxc-info -n "${honeypot}" -sH)
 if [[ $honeypot_state != "STOPPED" ]]; then
   sudo lxc-stop -n "$honeypot" -t 5
 fi
 sudo lxc-destroy -n "$honeypot"
 sleep 5
-echo "Compromised honeypot ${honeypot} deleted."
+echo "[$(date +"%F %H:%M:%S")] Compromised honeypot ${honeypot} deleted."
 
 
 ###### Delete running MITM processes
-echo "Deleting MITM processes..."
+echo "[$(date +"%F %H:%M:%S")] Deleting MITM processes..."
 process_to_delete1="sudo nohup node ${mitm_path} HACS200 ${mitm_port} \
 ${compromised_ip} ${honeypot} true mitm.js"
 pid1=`ps aux | grep "${process_to_delete1}" | head -n 1 | awk '{print $2}'`
@@ -102,13 +102,13 @@ ${compromised_ip} ${honeypot} true mitm.js"
 pid2=`ps aux | grep "${process_to_delete2}" | head -n 1 | awk '{print $2}'`
 sudo kill -9 "$pid2"
 
-echo "MITM processes deleted."
+echo "[$(date +"%F %H:%M:%S")] MITM processes deleted."
 
 ###### Compress and save collected data only if attacker successfully logged into honeypot
 if [ "$compress_data_flag" == "1" ]; then
-  echo "Compressing data..."
+  echo "[$(date +"%F %H:%M:%S")] Compressing data..."
   attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
   sudo bash data_compression.sh "/home/student/active_data_${container_code}/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID"
   echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_$container_code.txt"
-  echo "Attacker data compressed and saved."
+  echo "[$(date +"%F %H:%M:%S")] Attacker data compressed and saved."
 fi
