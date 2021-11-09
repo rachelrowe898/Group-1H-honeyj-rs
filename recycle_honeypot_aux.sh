@@ -3,7 +3,7 @@
 # when to recycle a honeypot (when the attacker leave or after 3 hours)
 
 # First check if proper number of shell arguments is given
-if [ $# -ne 2 ]; then
+if [ $# -lt 2 ] || [ $# -gt 3 ]; then
   echo "usage: $0 <honeypot_name> <mitm_port> <optional: compress_data_flag>"
   exit 1
 fi
