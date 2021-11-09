@@ -60,6 +60,7 @@ sudo iptables --table nat \
 sudo ip addr delete "${external_ip}/${netmask_prefix}" dev enp4s2
 
 # Stop data collection background processes
+# kill malware_monitoring.sh
 container_code=${honeypot: -1}
 dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 
@@ -67,8 +68,15 @@ while [ -n "$dataJobNum" ] ; do
   sudo kill -9 ${dataJobNum}
   dataJobNum=$(ps aux | grep "malware_monitoring.sh" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
 done
-echo "Malware monitoring stopped"
 
+#kill inotifywait specifically
+dataJobNum=$(ps aux | grep "inotifywait" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
+while [ -n "$dataJobNum" ] ; do
+  sudo kill -9 ${dataJobNum}
+  dataJobNum=$(ps aux | grep "inotifywait" | grep "HRServe$container_code" | awk '{ print $2 }' | sed -n 1p)
+done
+
+echo "Malware monitoring stopped"
 
 # Delete container
 echo "Deleting container..."
