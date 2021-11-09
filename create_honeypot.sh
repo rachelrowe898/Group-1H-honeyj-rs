@@ -19,28 +19,28 @@ mitm_log_path=$7
 
 template_state=`sudo lxc-ls -f | grep "${template}" | awk '{print $2}' | xargs`
 
-echo "Creating clean honeypot ${honeypot}..."
+echo "[$(date +"%F %H:%M:%S")] Creating clean honeypot ${honeypot}..."
 
 ###### Create new clean honeypot from template
 
 # Check to see if template container is stopped so a copy can be created
 if [[ $template_state != "STOPPED" ]]; then
-  echo "Template container $template is not stopped or does not exist"
+  echo "[$(date +"%F %H:%M:%S")] Template container $template is not stopped or does not exist"
   exit 1
 fi
 
 # Check if destination container name is not already taken
 if [[ -n $(sudo lxc-ls --filter="^${honeypot}$") ]]; then
-  echo "Error: Destination container $honeypot already exists"
+  echo "[$(date +"%F %H:%M:%S")] Error: Destination container $honeypot already exists"
   exit 1
 fi
 
 # Perform copy operation and start container again
-echo "Copying template..."
+echo "[$(date +"%F %H:%M:%S")] Copying template..."
 sudo lxc-copy -n "$template" -N "$honeypot"
 sudo lxc-start -n "$honeypot"
 sleep 5 # allow enough time for the IP mapping to be configured
-echo "Copy container $template to $honeypot completed at $(date -Iseconds)"
+echo "[$(date +"%F %H:%M:%S")] Copy container $template to $honeypot"
 
 
 ###### Set up firewall rules and networking container rules on new container
@@ -49,7 +49,7 @@ echo "Copy container $template to $honeypot completed at $(date -Iseconds)"
 clean_ip=$(sudo lxc-info -n "$honeypot" -iH)
 
 # create NAT mapping for honeypot's IP to the specified external IP and netmask
-echo "Configuring NAT mappings for clean honeypot..."
+echo "[$(date +"%F %H:%M:%S")] Configuring NAT mappings for clean honeypot..."
 sudo ip addr add "${external_ip}/${netmask_prefix}" dev enp4s2
 sudo iptables --table nat \
               --insert PREROUTING \
@@ -67,7 +67,7 @@ sudo iptables --table nat \
 ###### Set up MITM after external IP has been assigned
 
 # launch MITM server in background mode
-echo "Setting up MITM..."
+echo "[$(date +"%F %H:%M:%S")] Setting up MITM..."
 # sudo nohup node [full path to ./mitm/index.js] [id] [port] [container_ip] \
 # [container_id] [auto-access true/false] [mitm config name] > mitm_file 2>&1 &
 
@@ -81,7 +81,7 @@ sudo nohup node "$mitm_path" HACS200 "$mitm_port" \
 # installed on it and is already running
 
 # insert relevant iptables rules for the external IP
-echo "Inserting relevant iptables rules..."
+echo "[$(date +"%F %H:%M:%S")] Inserting relevant iptables rules..."
 host_ip=$(hostname -I | awk '{print $1}')
 sudo iptables --table nat \
              --insert PREROUTING \
@@ -101,5 +101,5 @@ sudo bash monitor-mitm.sh "$mitm_log" &
 container_code=${honeypot: -1}
 sudo bash malware_monitoring.sh "$honeypot" "/home/student/active_data_$container_code/" "$container_code" &
 
-echo "Finished recycling honeypot ${honeypot}."
+echo "[$(date +"%F %H:%M:%S")] Finished recycling honeypot ${honeypot}."
 
