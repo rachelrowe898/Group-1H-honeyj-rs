@@ -48,7 +48,7 @@ while read line; do
   elif [[ "$line" == *"Attacker closed connection"* ]]; then
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
     break
-  elif [[ entered -eq 0 && "$line" == *"Invalid credentials"* ]]; then 
+  elif [[ $entered -eq 0 && "$line" == *"Invalid credentials"* ]]; then 
     # force recycling but w/o saving data -- this means we have a problem 
     valid_data=0
     ps -aux | grep "tail -f $1" | awk '{ print $2 }' | sed '$ d' | sudo xargs kill
