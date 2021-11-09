@@ -15,7 +15,7 @@ if [ $# -ne 6 ]; then
 fi
 
 honeypot=$1
-template="$1_template"
+template="$(echo "$honeypot" | colrm 9)_template"
 external_ip=$2
 netmask_prefix=$3
 mitm_port=$4
