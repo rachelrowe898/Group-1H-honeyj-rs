@@ -30,7 +30,7 @@ fi
 
 
 while read line; do
-  if [[ "$line" == *"Attacker connected"* ]]; then
+  if [[ "$line" == *"Attacker connected"* && $rules_added -eq 0 ]]; then
     # stores last seen IP address in the MITM log
     attacker_ip=$(echo "$line" | awk '{ print $8 }')
   elif [[ "$line" == *"Adding the following credentials"* ]]; then
