@@ -15,7 +15,7 @@ if [ "$compress_data_flag" != "1" ] && [ "$compress_data_flag" != "0" ]; then
   exit 1
 fi
 
-sudo bash recycle_honeypot_aux.sh A "$compress_data_flag"
-sudo bash recycle_honeypot_aux.sh B "$compress_data_flag"
-sudo bash recycle_honeypot_aux.sh C "$compress_data_flag"
-sudo bash recycle_honeypot_aux.sh D "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh $(sudo lxc-ls -1 | grep 0) 10000 "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh $(sudo lxc-ls -1 | grep 1) 10001 "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh $(sudo lxc-ls -1 | grep 2) 10002 "$compress_data_flag"
+sudo bash recycle_honeypot_aux.sh $(sudo lxc-ls -1 | grep 3) 10003 "$compress_data_flag"
