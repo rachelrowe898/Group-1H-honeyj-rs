@@ -102,11 +102,17 @@ sudo kill -9 "$pid2"
 echo "[$(date +"%F %H:%M:%S")] MITM processes deleted."
 
 ###### Compress and save collected data only if attacker successfully logged into honeypot
+active_data_dir="/home/student/active_data_$(($mitm_port - 10000))/"
+
 if [ "$compress_data_flag" == "1" ]; then
   echo "[$(date +"%F %H:%M:%S")] Compressing data..."
   container_code=${honeypot: -2:-1}
   attkID=$(cat "/home/student/attackerID/attackerID_$container_code.txt")
-  sudo bash data_compression.sh "/home/student/active_data_$(($mitm_port - 10000))/" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID" "$(($mitm_port - 10000))"
+  sudo bash data_compression.sh "$active_data_dir" "/home/student/compressed_data/${container_code}/" "$container_code" "$attkID" "$(($mitm_port - 10000))"
   echo $(( $attkID + 1 )) > "/home/student/attackerID/attackerID_${container_code}.txt"
   echo "[$(date +"%F %H:%M:%S")] Attacker data compressed and saved."
 fi
+
+# Reset active data directory
+rm -r "$active_data_dir"
+mkdir "$active_data_dir"
