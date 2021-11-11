@@ -25,7 +25,4 @@ then
   localPath="active_data_$5"
   zip -r "$zipname" "$localPath"
   mv "$zipname.zip" "$2"
-
-  rm -r "$1"
-  mkdir "$1"
 fi
