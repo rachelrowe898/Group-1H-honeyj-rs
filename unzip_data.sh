@@ -17,7 +17,7 @@ attackID="1"
 containerCode="$3"
 
 # get zip file name
-currUnzip=$( ls "$zipSourceDir$containerCode" | grep "${containerCode}_${attackID}" )
+currUnzip=$( ls "$zipSourceDir$containerCode" | grep "${containerCode}_${attackID}_" )
 currUnzip="$zipSourceDir$containerCode/$currUnzip"
 
 if [[ "$currUnzip" != "$zipSourceDir$containerCode/" ]]
@@ -40,7 +40,7 @@ while [ $fileExists -eq 1 ] ; do
  #echo "ls on ${zipSourceDir}${containerCode}"
  #echo "grep on ${containerCode}_${attackID}"
 
-  currUnzip=$(ls "${zipSourceDir}${containerCode}" | grep "${containerCode}_${attackID}")
+  currUnzip=$(ls "${zipSourceDir}${containerCode}" | grep "${containerCode}_${attackID}_")
   currUnzip="$zipSourceDir$containerCode/$currUnzip"
 
  #echo "file path to unzip $currUnzip"
