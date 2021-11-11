@@ -11,7 +11,6 @@ container=$(echo "$mitm_log_file" | cut -d '/' -f 5 | sed 's/.log//')
 rules_added=0
 
 host_ip=$(hostname -I | awk '{print $1}')
-mitm_port=0
 valid_data=1
 entered=0
 
