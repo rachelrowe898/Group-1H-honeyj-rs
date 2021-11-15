@@ -14,6 +14,8 @@ host_ip=$(hostname -I | awk '{print $1}')
 valid_data=1
 entered=0
 
+echo "[$(date +"%F %H:%M:%S")] Monitoring file $mitm_log_file on port $mitm_port"
+
 while read line; do
   if [[ $rules_added -eq 0 && "$line" == *"Attacker connected"* ]]; then
     # stores last seen IP address in the MITM log
@@ -24,6 +26,7 @@ while read line; do
     sleep 1
     sudo lxc-attach -n "$container" -- ln -s "/shared/" "/home/$user/"
   elif [[ $rules_added -eq 0 && "$line" == *"Attacker authenticated and is inside container"* ]]; then
+    echo "[$(date +"%F %H:%M:%S")] Starting timer and adding IP blocking rules"
     bash timer.sh "$mitm_log_file" "$attacker_ip" "$host_ip" "$mitm_port" &
     # Add networking rules to keep out all traffic except the attacker IP that is already inside
     rules_added=1
@@ -41,6 +44,7 @@ while read line; do
 done < <(sudo tail -f "$1")
 
 if [ "$valid_data" -eq 1 ]; then 
+  echo "[$(date +"%F %H:%M:%S")] Killing timer and removing IP blocking rules" 
   # kill timer command
   ps -aux | grep "timer.sh $1" | awk '{ print $2 }' | sed '$ d' | xargs kill
 
@@ -49,4 +53,5 @@ if [ "$valid_data" -eq 1 ]; then
   sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
 fi 
 
+echo "[$(date +"%F %H:%M:%S")] Calling recycling script from monitor-mitm"
 sudo bash recycle_honeypot_aux.sh "$container" "$mitm_port" "$valid_data"

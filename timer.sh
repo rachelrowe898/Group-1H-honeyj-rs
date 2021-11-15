@@ -12,10 +12,13 @@ mitm_port="$4"
 
 sleep 10800
 
+echo "[$(date +"%F %H:%M:%S")] Killing monitoring script and removing IP blocking rules"
 # murder monitoring script
 ps -aux | grep "monitor-mitm.sh $1" |  awk '{ print $2 }' | sed '$ d' | xargs kill
 
 # end stuff
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
 sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
+
+echo "[$(date +"%F %H:%M:%S")] Calling recycling script from timer"
 sudo bash recycle_honeypot_aux.sh "$container" "$mitm_port" 1
