@@ -18,6 +18,9 @@ ps -aux | grep "monitor-mitm.sh $1" |  awk '{ print $2 }' | sed '$ d' | xargs ki
 
 # end stuff
 sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
+
+sleep 600
+
 sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
 
 echo "[$(date +"%F %H:%M:%S")] Calling recycling script from timer"
