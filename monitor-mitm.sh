@@ -50,6 +50,9 @@ if [ "$valid_data" -eq 1 ]; then
 
   # After attacker leaves, reset networking rules and recycle container
   sudo iptables -D INPUT -s "$attacker_ip" -d "$host_ip" -p tcp --destination-port "$mitm_port" -j ACCEPT
+  
+  sleep 600
+  
   sudo iptables -D INPUT -d "$host_ip" -p tcp --destination-port "$mitm_port" -j REJECT
 fi 
 
