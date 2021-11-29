@@ -54,3 +54,6 @@ while [ $fileExists -eq 1 ] ; do
   fi
 
 done
+
+attackID=$(( $attackID - 1 ))
+echo "last unzipped: ${containerCode}, ${attackID}"
